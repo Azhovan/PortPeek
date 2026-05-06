@@ -6,6 +6,7 @@ public struct PortListView: View {
     @State private var portToKill: PortEntry?
     @State private var killError: String?
     @State private var searchText = ""
+    @State private var pollTimer: Timer?
 
     public init(scanner: PortScannerService) {
         self.scanner = scanner
@@ -39,7 +40,16 @@ public struct PortListView: View {
         } message: {
             Text(killError ?? "")
         }
-        .onAppear { scanner.scan() }
+        .onAppear {
+            scanner.scan()
+            pollTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+                Task { @MainActor in scanner.scan() }
+            }
+        }
+        .onDisappear {
+            pollTimer?.invalidate()
+            pollTimer = nil
+        }
     }
 
     private var showKillAlert: Binding<Bool> {
