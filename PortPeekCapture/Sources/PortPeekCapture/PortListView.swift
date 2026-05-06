@@ -2,12 +2,13 @@ import SwiftUI
 
 struct PortListView: View {
     @Bindable var scanner: PortScannerService
-    @State private var portToKill: PortEntry?
-    @State private var killError: String?
+    @State private var searchText = ""
 
     var body: some View {
         VStack(spacing: 0) {
             header
+            Divider()
+            searchField
             Divider()
             content
             Divider()
@@ -31,6 +32,17 @@ struct PortListView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField("Search ports...", text: $searchText)
+                .textFieldStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
 
     @ViewBuilder
